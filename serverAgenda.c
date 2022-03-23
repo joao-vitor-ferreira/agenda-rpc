@@ -14,10 +14,10 @@ agenda *list = NULL;
 int *insere_1_svc(contato *c, struct svc_req *rqstp){
     static int result = 0;
     char *nome = NULL, *endereco = NULL;
-    if(c == null)
+    if(c == NULL)
         return &result;
     // alocando contato
-    contato *new = (contato)malloc(sizeof(contato));
+    contato *new = (contato*)malloc(sizeof(contato));
     nome = (char*)malloc(sizeof(char)*(strlen(c->nome)+1));
     endereco = (char*)malloc(sizeof(char)*(strlen(c->endereco)+1));
     // agenda *new_l = (agenda)malloc(sizeof(agenda));
@@ -29,8 +29,8 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
     new->endereco = endereco;
     new->telefone = c->telefone;
 
-    if(list == null){
-        list = (agenda)malloc(sizeof(agenda));
+    if(list == NULL){
+        list = (agenda*)malloc(sizeof(agenda));
         list->first = new;
         list->last = new;
     } else {
@@ -41,13 +41,14 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
     printf("Contato inserido.\n");
     return &result;
 }
-
-contato busca_contato(char *nome){
+// FUNCAO PARA ENCONTRAR OS CONTATOS NA AGENDA
+contato *busca_contato(char *nome){
+    contato *atual = NULL;
     if(list == NULL){
         printf("Não há contatos na agenda\n");
-        return NULL;
+        return atual;
     }else{
-        contato *atual = (contato)list->first;
+        atual = (contato*)list->first;
         while(atual != NULL){
             if(strcmp(nome, atual->nome) == 0){
                 return atual;
@@ -55,27 +56,31 @@ contato busca_contato(char *nome){
         }
     }
     printf("Contato não encontrado\n");
-    return NULL;
+    return atual;
 }
 
-contato *consulta_1_svc(char *nome, struct svc_req *rqstp){
-    static contato result = busca_contato(nome);
-    return &result;
+contato *consulta_1_svc(char **nome, struct svc_req *rqstp){
+    static contato *result;
+    result = busca_contato(*nome);
+    return result;
 }
-
+// FUNCAO QUE DADO UM CONTATO ENVIADO PELO CLIENTE, A QUAL ESTE CONTATO 
+// DEVE TER O NOME DO CONTATO, ELE ALTERA AS INFORMACOES
 int *altera_1_svc(contato *c, struct svc_req *rqstp){
     static int result = 0;
     char *nome = NULL, *endereco = NULL;
 
-    contato c_achado = busca_contato(c->nome);
+    contato *c_achado = busca_contato(c->nome);
     if(c_achado != NULL){
+        printf("Contato encontrado\n");
         endereco = (char*)malloc(sizeof(char)*(strlen(c->endereco)+1));
         if(c_achado->endereco != NULL)
             free(c_achado->endereco);
         c_achado->nome = nome;
         c_achado->telefone = c->telefone;
+        printf("Contato alterado.\n");
     }else{
-        result = 2; // contato não encontrado
+        result = 0; // contato não encontrado
         return &result;
     }
 
@@ -83,23 +88,16 @@ int *altera_1_svc(contato *c, struct svc_req *rqstp){
     return &result;
 }
 
-
-/* implementa��o da fun��o add */
-int * add_1_svc (contato *argp, struct svc_req *rqstp)
-{
-   static int result;
-
-   printf ("Recebi chamado: add %d %d\n", argp->x, argp->y);
-   result = argp->x + argp->y;
-   return (&result);
+int *remover_1_svc(char **nome, struct svc_req *rqstp){
+    static int result = 0;
+    contato *c = busca_contato(*nome);
+    if(c != NULL){
+        if(c->nome !=NULL)
+            free(c->nome);
+        if(c->endereco != NULL)
+            free(c->endereco);
+        free(c);
+        result++;
+    }
+    return &result;
 }
-
-/* implementa��o da fun��o sub */
-int * sub_1_svc (contato *argp, struct svc_req *rqstp)
-{
-   static int result;
-
-   printf ("Recebi chamado: sub %d %d\n", argp->x, argp->y);
-   result = argp->x - argp->y;
-   return (&result);
-} 

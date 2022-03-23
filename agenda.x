@@ -11,8 +11,6 @@ struct contato
     contato *next;
 };
 
-/* Defini��o da interface que ser� oferecida aos clientes */
-
 program AGENDA_PROG
 {
    version AGENDA_VERSION
@@ -20,7 +18,7 @@ program AGENDA_PROG
         int INSERE(contato) = 1;
         contato CONSULTA(string) = 2;
         int ALTERA(contato) = 3;
-        int REMOVE(contato) = 4;
+        int REMOVER(string) = 4;
    }
    = VERSION_NUMBER;
 }
