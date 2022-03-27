@@ -77,8 +77,6 @@ contato *busca_contato(char *nome){
         }
     }
     printf("Contato não encontrado\n");
-    if(atual == NULL)
-        printf("nulo\n");
     return atual;
 }
 
