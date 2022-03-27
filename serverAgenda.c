@@ -81,12 +81,11 @@ contato *consulta_1_svc(char **nome, struct svc_req *rqstp){
     result = busca_contato(*nome);
     if(result == NULL){
         c.erro = 1; // indica que não foi encontrado o contato
-        c.nome = NULL;
-        c.endereco = NULL;
+        c.nome = "teste";
+        c.endereco = "teste";
         c.telefone = 0;
         c.next = NULL;
         printAgenda();
-        printf("aki\n");
         return &c;
     }else{
         result->erro = 0;
