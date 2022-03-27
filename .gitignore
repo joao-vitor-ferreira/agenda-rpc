@@ -5,3 +5,4 @@ agenda_xdr.c
 server
 cliente
 exemplo/*
+agenda.h

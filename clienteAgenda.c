@@ -104,84 +104,82 @@ int main( int argc, char *argv[])
         printf("SAIR:              5\n");
         printf("Digite o numero da opção que deseja: ");
         scanf(" %d", &opcao);
-        if(opcao > 0 && opcao < 5){
-            switch (opcao){
-            case 1:
-                printf("Digite o nome do seu contato: ");
-                scanf(" %[^\n]", nome);
-                printf("Digite o endereço do seu contato: ");
-                scanf(" %[^\n]", endereco);
-                printf("Digite o telefone do seu contato (somente números): ");
-                scanf(" %d", &telefone);
-                retorno = insere(clnt, nome, endereco, telefone);
+        switch (opcao){
+        case 1:
+            printf("Digite o nome do seu contato: ");
+            scanf(" %[^\n]", nome);
+            printf("Digite o endereço do seu contato: ");
+            scanf(" %[^\n]", endereco);
+            printf("Digite o telefone do seu contato (somente números): ");
+            scanf(" %d", &telefone);
+            retorno = insere(clnt, nome, endereco, telefone);
 
-                if(retorno)
-                    printf("Contato inserido\n");
-                else
-                    printf("Erro ao inserir contato\n");
+            if(retorno)
+                printf("Contato inserido\n");
+            else
+                printf("Erro ao inserir contato\n");
 
-                break;
-            
-            case 2:
-                printf("Digite o nome do seu contato: ");
-                scanf(" %[^\n]", nome);
-                c = consulta(clnt, nome);
-                if(c.erro == 1){
-                    printf("Contato não encontrado\n");
-                }else{
-                    printf("########## CONTATO ###########\n");
-                    printf("Nome: %s\n", c.nome);
-                    printf("Endereço: %s\n", c.endereco);
-                    printf("Telefone: %d\n", c.telefone);
-                }
-
-                break;
-            
-            case 3:
-                printf("Digite o nome do contato a ser alterado: ");
-                scanf(" %[^\n]", nome);
-                printf("Digite o novo endereço do seu contato: ");
-                scanf(" %[^\n]", endereco);
-                printf("Digite o novo telefone do seu contato (somente números): ");
-                scanf(" %d", &telefone);
-
-                contato ctt;
-                ctt.nome = malloc(sizeof(char)*(strlen(nome)+1));
-                strcpy(ctt.nome, nome);
-                ctt.endereco = malloc(sizeof(char)*(strlen(endereco)+1));
-                strcpy(ctt.endereco, endereco);
-                ctt.telefone = telefone;
-
-                retorno = altera(clnt, ctt);
-
-                if(retorno)
-                    printf("Contato alterado\n");
-                else
-                    printf("Erro ao alterar contato\n");
-                    
-                if(ctt.nome != NULL)
-                    free(ctt.nome);
-                if(ctt.endereco != NULL)
-                    free(ctt.endereco);
-
-                break;
-
-            case 4:
-                printf("Digite o nome do contato a ser alterado: ");
-                scanf(" %[^\n]", nome);
-                retorno = remover(clnt, nome);
-                if(retorno)
-                    printf("Contato removido\n");
-                else
-                    printf("Contato não encontrado\n");
-
-                break;
-            default:
-                return 0;
-                break;
+            break;
+        
+        case 2:
+            printf("Digite o nome do seu contato: ");
+            scanf(" %[^\n]", nome);
+            c = consulta(clnt, nome);
+            if(c.erro == 1){
+                printf("Contato não encontrado\n");
+            }else{
+                printf("########## CONTATO ###########\n");
+                printf("Nome: %s\n", c.nome);
+                printf("Endereço: %s\n", c.endereco);
+                printf("Telefone: %d\n", c.telefone);
             }
-            printf("\n");
+
+            break;
+        
+        case 3:
+            printf("Digite o nome do contato a ser alterado: ");
+            scanf(" %[^\n]", nome);
+            printf("Digite o novo endereço do seu contato: ");
+            scanf(" %[^\n]", endereco);
+            printf("Digite o novo telefone do seu contato (somente números): ");
+            scanf(" %d", &telefone);
+
+            contato ctt;
+            ctt.nome = malloc(sizeof(char)*(strlen(nome)+1));
+            strcpy(ctt.nome, nome);
+            ctt.endereco = malloc(sizeof(char)*(strlen(endereco)+1));
+            strcpy(ctt.endereco, endereco);
+            ctt.telefone = telefone;
+
+            retorno = altera(clnt, ctt);
+
+            if(retorno)
+                printf("Contato alterado\n");
+            else
+                printf("Erro ao alterar contato\n");
+                
+            if(ctt.nome != NULL)
+                free(ctt.nome);
+            if(ctt.endereco != NULL)
+                free(ctt.endereco);
+
+            break;
+
+        case 4:
+            printf("Digite o nome do contato a ser alterado: ");
+            scanf(" %[^\n]", nome);
+            retorno = remover(clnt, nome);
+            if(retorno)
+                printf("Contato removido\n");
+            else
+                printf("Contato não encontrado\n");
+
+            break;
+        default:
+            return(0);
+            break;
         }
+        printf("\n");
     }
     
 
