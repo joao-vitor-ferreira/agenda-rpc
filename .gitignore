@@ -6,3 +6,4 @@ server
 cliente
 exemplo/*
 agenda.h
+.vscode/*

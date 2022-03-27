@@ -12,7 +12,7 @@ static int respondeu = 0;
 void *timeout(void *vargp) {
    int i = 0;
    for (i = 0; i < 6; i++) {
-      usleep(500000);
+      usleep(200000);
       if(respondeu == 1) {
          return NULL;
       }
@@ -126,7 +126,7 @@ int main( int argc, char *argv[])
     /* verifica se o cliente foi chamado corretamente */
     if (argc!=2)
     {
-        fprintf (stderr,"Usage: %s hostname num1 num2\n",argv[0]);
+        fprintf (stderr,"Usage: %s hostname\n",argv[0]);
         exit (1);
     }
 
