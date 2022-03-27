@@ -150,52 +150,53 @@ int main( int argc, char *argv[])
     respondeu = 0;
 
     while (1){
-        printf("##################### AGENDA ####################\n");
-        printf("INSERIR CONTATO:   1\n");
-        printf("CONSULTAR CONTATO: 2\n");
-        printf("ALTERAR CONTATO:   3\n");
-        printf("EXCLUIR CONTATO:   4\n");
-        printf("SAIR:              5\n");
-        printf("Digite o numero da opção que deseja: ");
+        printf("###################### AGENDA #####################\n");
+        printf("# INSERIR CONTATO:   1\n");
+        printf("# CONSULTAR CONTATO: 2\n");
+        printf("# ALTERAR CONTATO:   3\n");
+        printf("# EXCLUIR CONTATO:   4\n");
+        printf("# SAIR:              5\n");
+        printf("# Digite o numero da opção que deseja: ");
         scanf(" %d", &opcao);
         switch (opcao){
         case 1:
-            printf("Digite o nome do seu contato: ");
+            printf("# Digite o nome do seu contato: ");
             scanf(" %[^\n]", nome);
-            printf("Digite o endereço do seu contato: ");
+            printf("# Digite o endereço do seu contato: ");
             scanf(" %[^\n]", endereco);
-            printf("Digite o telefone do seu contato (somente números): ");
+            printf("# Digite o telefone do seu contato (somente números): ");
             scanf(" %d", &telefone);
             retorno = insere(clnt, nome, endereco, telefone);
 
             if(retorno)
-                printf("Contato inserido\n");
+                printf("# Contato inserido\n");
             else
-                printf("Erro ao inserir contato\n");
+                printf("# Erro ao inserir contato\n");
 
             break;
         
         case 2:
-            printf("Digite o nome do seu contato: ");
+            printf("# Digite o nome do seu contato: ");
             scanf(" %[^\n]", nome);
             c = consulta(clnt, nome);
             if(c.erro == 1){
-                printf("Contato não encontrado\n");
+                printf("# Contato não encontrado\n");
             }else{
-                printf("########## CONTATO ###########\n");
-                printf("Nome: %s\n", c.nome);
-                printf("Endereço: %s\n", c.endereco);
-                printf("Telefone: %d\n", c.telefone);
+                printf("#     @@@@@@@@@@@@@@@@@@@@ CONTATO @@@@@@@@@@@\n");
+                printf("#     @ Nome: %s\n", c.nome);
+                printf("#     @ Endereço: %s\n", c.endereco);
+                printf("#     @ Telefone: %d\n", c.telefone);
+                printf("#     @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
             }
 
             break;
         
         case 3:
-            printf("Digite o nome do contato a ser alterado: ");
+            printf("# Digite o nome do contato a ser alterado: ");
             scanf(" %[^\n]", nome);
-            printf("Digite o novo endereço do seu contato: ");
+            printf("# Digite o novo endereço do seu contato: ");
             scanf(" %[^\n]", endereco);
-            printf("Digite o novo telefone do seu contato (somente números): ");
+            printf("# Digite o novo telefone do seu contato (somente números): ");
             scanf(" %d", &telefone);
 
             contato ctt;
@@ -208,9 +209,9 @@ int main( int argc, char *argv[])
             retorno = altera(clnt, ctt);
 
             if(retorno)
-                printf("Contato alterado\n");
+                printf("# Contato alterado\n");
             else
-                printf("Erro ao alterar contato\n");
+                printf("# Erro ao alterar contato\n");
                 
             if(ctt.nome != NULL)
                 free(ctt.nome);
@@ -220,20 +221,20 @@ int main( int argc, char *argv[])
             break;
 
         case 4:
-            printf("Digite o nome do contato a ser excluído: ");
+            printf("# Digite o nome do contato a ser excluído: ");
             scanf(" %[^\n]", nome);
             retorno = remover(clnt, nome);
             if(retorno)
-                printf("Contato removido\n");
+                printf("# Contato removido\n");
             else
-                printf("Contato não encontrado\n");
+                printf("# Contato não encontrado\n");
 
             break;
         default:
             return(0);
             break;
         }
-        printf("\n");
+        printf("###################################################\n");
     }
     
 

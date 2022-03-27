@@ -20,7 +20,7 @@ void printAgenda(){
     contato *atual = (contato*)list->first;
     printf("################# Agenda Atual #######################\n");
     while (atual != NULL){
-        printf("nome: %s\n", atual->nome);
+        printf("# nome: %s\n", atual->nome);
         atual = atual->next;
     }
     printf("######################################################\n");
