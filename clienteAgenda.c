@@ -10,18 +10,18 @@
 static int respondeu = 0;
 
 void *timeout(void *vargp) {
-   int i = 0;
-   for (i = 1; i < 45; i++) {
-      usleep(200000);
-      if(respondeu == 1) {
-         return NULL;
-      }
-      if(i%15 == 0) {
-          printf("Conectando ao servidor, tentativa %d ...", (i/15)+1);
-      }
-   }
-   printf("O servidor demorou muito para responder.\n");
-   exit(0);
+    int i = 0;
+    for (i = 1; i < 45; i++) {
+        usleep(200000);
+        if(respondeu == 1) {
+            return NULL;
+        }
+        if(i%15 == 0) {
+            printf("Conectando ao servidor, tentativa %d ...\n", (i/15)+1);
+        }
+    }
+    printf("O servidor demorou muito para responder.\n");
+    exit(0);
 }
 
 int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
@@ -116,6 +116,25 @@ int remover(CLIENT *clnt, char *nome){
     return *result;
 }
 
+int remover_todos(CLIENT *clnt){
+    int *result;
+    pthread_t thread_id;
+
+    pthread_create(&thread_id, NULL, timeout, NULL);
+    result = remover_todos_1(NULL, clnt);
+
+    if(result == NULL){
+        printf("Erro ao chamar funcao remota\n");
+        exit(1);
+    }
+
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
+    return *result;
+}
+
 int main( int argc, char *argv[])
 {
     CLIENT *clnt;
@@ -155,13 +174,20 @@ int main( int argc, char *argv[])
         printf("# CONSULTAR CONTATO: 2\n");
         printf("# ALTERAR CONTATO:   3\n");
         printf("# EXCLUIR CONTATO:   4\n");
-        printf("# SAIR:              5\n");
+        printf("# LIMPAR AGENDA:     5\n");
+        printf("# SAIR:              6\n");
         printf("# Digite o numero da opção que deseja: ");
         scanf(" %d", &opcao);
         switch (opcao){
         case 1:
             printf("# Digite o nome do seu contato: ");
             scanf(" %[^\n]", nome);
+            c = consulta(clnt, nome);
+            if(c.erro == 0){
+                printf("# O contato já existe\n");
+                break;
+            }
+
             printf("# Digite o endereço do seu contato: ");
             scanf(" %[^\n]", endereco);
             printf("# Digite o telefone do seu contato (somente números): ");
@@ -228,6 +254,15 @@ int main( int argc, char *argv[])
                 printf("# Contato removido\n");
             else
                 printf("# Contato não encontrado\n");
+
+            break;
+
+        case 5:
+            retorno = remover_todos(clnt);
+            if(retorno)
+                printf("# Todos os contatos foram removidos\n");
+            else
+                printf("# Erro ao remover os contatos\n");
 
             break;
         default:

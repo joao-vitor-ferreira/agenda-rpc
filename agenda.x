@@ -20,6 +20,7 @@ program AGENDA_PROG
         contato CONSULTA(string) = 2;
         int ALTERA(contato) = 3;
         int REMOVER(string) = 4;
+        int REMOVER_TODOS(void) = 5;
    }
    = VERSION_NUMBER;
 }

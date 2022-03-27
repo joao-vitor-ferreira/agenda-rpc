@@ -161,3 +161,29 @@ int *remover_1_svc(char **nome, struct svc_req *rqstp){
     printAgenda();
     return &result;
 }
+
+int *remover_todos_1_svc(void *param, struct svc_req *rqstp){
+    static int result = 0;
+    contato *atual = NULL, *proximo = NULL;
+    
+    if(list != NULL) {
+        atual = (contato*) list->first;
+        while (atual != NULL) {
+            if(atual->nome !=NULL)
+                free(atual->nome);
+            if(atual->endereco != NULL)
+                free(atual->endereco);
+            proximo = atual->next;
+            free(atual);
+            atual = proximo;
+        }
+        free(list);
+        list = NULL;
+    }
+
+    result++;
+    printAgenda();
+
+    return &result;
+    
+}
