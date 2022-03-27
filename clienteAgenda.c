@@ -11,10 +11,13 @@ static int respondeu = 0;
 
 void *timeout(void *vargp) {
    int i = 0;
-   for (i = 0; i < 6; i++) {
+   for (i = 1; i < 45; i++) {
       usleep(200000);
       if(respondeu == 1) {
          return NULL;
+      }
+      if(i%15 == 0) {
+          printf("Conectando ao servidor, tentativa %d ...", (i/15)+1);
       }
    }
    printf("O servidor demorou muito para responder.\n");
@@ -145,11 +148,6 @@ int main( int argc, char *argv[])
     respondeu = 1;
     pthread_join(thread_id, NULL);
     respondeu = 0;
-
-    retorno = insere(clnt, "joao", "endereço 1", 9999999);
-    retorno = insere(clnt, "maria", "endereço 1", 8888888);
-    retorno = insere(clnt, "jose", "endereço 1", 7777777);
-    retorno = insere(clnt, "nome", "endereço 1", 6666666);
 
     while (1){
         printf("##################### AGENDA ####################\n");
