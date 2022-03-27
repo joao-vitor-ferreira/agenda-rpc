@@ -8,6 +8,7 @@ struct contato
     char *nome;
     char *endereco;
     int telefone;
+    int erro;
     contato *next;
 };
 

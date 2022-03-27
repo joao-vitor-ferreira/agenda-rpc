@@ -11,6 +11,7 @@ int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
     c.telefone = telefone;
 
     result = insere_1(&c, clnt);
+    printf("aki\n");
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
@@ -24,6 +25,8 @@ contato consulta(CLIENT *clnt, char *nome){
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
+    } else if(result->erro == 1) {
+        printf("Contato nao encontrado\n");
     }
     return *result;
 }
@@ -52,7 +55,7 @@ int main( int argc, char *argv[])
 {
    CLIENT *clnt;
    int opcao, telefone;
-   char *nome = NULL, *endereco = NULL;
+   char nome[20], endereco[30];
    int retorno;
    contato *c;
 
@@ -65,6 +68,7 @@ int main( int argc, char *argv[])
    }
 
    /* cria uma struct CLIENT que referencia uma interface RPC */
+   printf("%s\n", argv[1]);
    clnt = clnt_create (argv[1], AGENDA_PROG, AGENDA_VERSION, "udp");
 
    /* verifica se a refer�ncia foi criada */
@@ -74,7 +78,11 @@ int main( int argc, char *argv[])
       exit(1);
    }
 
-    while (1){
+//    retorno = insere(clnt, "nome", "endereco", 9999999);
+   *c = consulta(clnt, "nome");
+   printf("@@%d\n", retorno);
+
+    while (0){
         printf("##################### AGENDA ####################\n");
         printf("INSERIR CONTATO:   1\n");
         printf("CONSULTAR CONTATO: 2\n");

@@ -28,6 +28,7 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
     new->nome = nome;
     new->endereco = endereco;
     new->telefone = c->telefone;
+    new->erro = 0;
 
     if(list == NULL){
         list = (agenda*)malloc(sizeof(agenda));
@@ -60,8 +61,14 @@ contato *busca_contato(char *nome){
 }
 
 contato *consulta_1_svc(char **nome, struct svc_req *rqstp){
-    static contato *result;
+    contato *result;
+    printf("%s\n", *nome);
     result = busca_contato(*nome);
+    if(result == NULL){
+        contato c;
+        c.erro = 1;
+        return &c;
+    }
     return result;
 }
 // FUNCAO QUE DADO UM CONTATO ENVIADO PELO CLIENTE, A QUAL ESTE CONTATO 

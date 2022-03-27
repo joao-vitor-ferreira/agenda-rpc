@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "addsub.h"
 
-/* implementação da função add */
+/* implementaï¿½ï¿½o da funï¿½ï¿½o add */
 int * add_1_svc (operands *argp, struct svc_req *rqstp)
 {
    static int result;
@@ -11,7 +11,7 @@ int * add_1_svc (operands *argp, struct svc_req *rqstp)
    return (&result);
 }
 
-/* implementação da função sub */
+/* implementaï¿½ï¿½o da funï¿½ï¿½o sub */
 int * sub_1_svc (operands *argp, struct svc_req *rqstp)
 {
    static int result;
@@ -19,4 +19,14 @@ int * sub_1_svc (operands *argp, struct svc_req *rqstp)
    printf ("Recebi chamado: sub %d %d\n", argp->x, argp->y);
    result = argp->x - argp->y;
    return (&result);
+}
+
+aa * soma_1_svc (operands *ops, struct svc_req *rqstp)
+{
+   static aa o;
+   o.sub = ops->x - ops->y;
+   o.soma = ops->y + ops->x;
+   o.error = 1;
+   printf ("Recebi chamado: sub %d %d\n", ops->x, ops->y);
+   return (&o);
 } 

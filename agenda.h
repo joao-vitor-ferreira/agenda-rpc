@@ -18,6 +18,7 @@ struct contato {
 	char *nome;
 	char *endereco;
 	int telefone;
+	int erro;
 	struct contato *next;
 };
 typedef struct contato contato;

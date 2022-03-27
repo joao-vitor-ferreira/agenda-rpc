@@ -16,6 +16,8 @@ xdr_contato (XDR *xdrs, contato *objp)
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->telefone))
 		 return FALSE;
+	 if (!xdr_int (xdrs, &objp->erro))
+		 return FALSE;
 	 if (!xdr_pointer (xdrs, (char **)&objp->next, sizeof (contato), (xdrproc_t) xdr_contato))
 		 return FALSE;
 	return TRUE;
