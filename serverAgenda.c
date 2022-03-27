@@ -14,7 +14,9 @@ agenda *list = NULL;
 
 void printAgenda(){
     if(list == NULL){
-        printf("Agenda vazia\n");
+        printf("################# Agenda Atual #######################\n");
+        printf("# Agenda vazia\n");
+        printf("######################################################\n");
         return;
     }
     contato *atual = (contato*)list->first;
