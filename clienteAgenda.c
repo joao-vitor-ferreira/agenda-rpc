@@ -220,7 +220,7 @@ int main( int argc, char *argv[])
             break;
 
         case 4:
-            printf("Digite o nome do contato a ser alterado: ");
+            printf("Digite o nome do contato a ser excluído: ");
             scanf(" %[^\n]", nome);
             retorno = remover(clnt, nome);
             if(retorno)

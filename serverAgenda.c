@@ -6,6 +6,7 @@
 typedef struct{
     contato *first;
     contato *last;
+    int qtd;
 }agenda;
 
 // LISTA VAZIA
@@ -17,10 +18,12 @@ void printAgenda(){
         return;
     }
     contato *atual = (contato*)list->first;
+    printf("################# Agenda Atual #######################\n");
     while (atual != NULL){
         printf("nome: %s\n", atual->nome);
         atual = atual->next;
     }
+    printf("######################################################\n");
 }
 
 int *insere_1_svc(contato *c, struct svc_req *rqstp){
@@ -45,10 +48,12 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
         list = (agenda*)malloc(sizeof(agenda));
         list->first = new;
         list->last = new;
+        list->qtd = 0;
     } else {
         list->last->next = new;
         list->last = new;
     }
+    list->qtd++;
     result = 1;
     printf("Contato inserido.\n");
     printAgenda();
@@ -126,13 +131,18 @@ int *remover_1_svc(char **nome, struct svc_req *rqstp){
     atual = (contato*)list->first;
     while (atual != NULL){
         if(strcmp(*nome, atual->nome) == 0){
-            if(atual->next == NULL){
-                anterior->next = NULL;
-                list->last = anterior;
-            }else if(anterior == NULL){
-                list->first = atual->next;
-            } else {
-                anterior->next = atual->next;
+            if(list->qtd==1){
+                free(list);
+                list = NULL;
+            }else{
+                if(atual->next == NULL){
+                    anterior->next = NULL;
+                    list->last = anterior;
+                }else if(anterior == NULL){
+                    list->first = atual->next;
+                } else {
+                    anterior->next = atual->next;
+                }
             }
             if(atual->nome !=NULL)
                 free(atual->nome);
@@ -146,6 +156,8 @@ int *remover_1_svc(char **nome, struct svc_req *rqstp){
         anterior = atual;
         atual = atual->next;
     }
+    if(list != NULL)
+        list->qtd--;
     printAgenda();
     return &result;
 }

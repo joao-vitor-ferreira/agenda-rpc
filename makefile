@@ -18,10 +18,10 @@ $(TARGETS) : $(TARGETS.x)
 	rpcgen $(RPCGENFLAGS) $(TARGETS.x)
 
 $(SERVER) : $(OBJECTS_SVC)
-	gcc $(TARGETS_SVC.c) -o $(SERVER)
+	gcc $(TARGETS_SVC.c) -pthread -o $(SERVER)
 
 $(CLIENTE) : $(OBJECTS_CLNT)
-	gcc $(TARGETS_CLNT.c) -o $(CLIENTE)
+	gcc $(TARGETS_CLNT.c) -pthread -o $(CLIENTE)
 
 clean : 
 	$(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENTE) $(SERVER)
