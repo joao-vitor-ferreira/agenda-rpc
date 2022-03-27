@@ -1,5 +1,5 @@
 SERVER=server
-CLIENTE=cliente
+CLIENTE=client
 
 TARGETS.x = agenda.x
 TARGETS.h = agenda.h
