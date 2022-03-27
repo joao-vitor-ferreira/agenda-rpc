@@ -11,6 +11,18 @@ typedef struct{
 // LISTA VAZIA
 agenda *list = NULL;
 
+void printAgenda(){
+    if(list == NULL){
+        printf("Agenda vazia\n");
+        return;
+    }
+    contato *atual = (contato*)list->first;
+    while (atual != NULL){
+        printf("nome: %s\n", atual->nome);
+        atual = atual->next;
+    }
+}
+
 int *insere_1_svc(contato *c, struct svc_req *rqstp){
     static int result = 0;
     char *nome = NULL, *endereco = NULL;
@@ -20,8 +32,6 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
     contato *new = (contato*)malloc(sizeof(contato));
     nome = (char*)malloc(sizeof(char)*(strlen(c->nome)+1));
     endereco = (char*)malloc(sizeof(char)*(strlen(c->endereco)+1));
-    // agenda *new_l = (agenda)malloc(sizeof(agenda));
-
     // pasando o conteudo que veio para memoria
     strcpy(nome, c->nome);
     strcpy(endereco, c->endereco);
@@ -29,6 +39,7 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
     new->endereco = endereco;
     new->telefone = c->telefone;
     new->erro = 0;
+    new->next = NULL;
 
     if(list == NULL){
         list = (agenda*)malloc(sizeof(agenda));
@@ -36,10 +47,11 @@ int *insere_1_svc(contato *c, struct svc_req *rqstp){
         list->last = new;
     } else {
         list->last->next = new;
+        list->last = new;
     }
-    new->next = NULL;
     result = 1;
     printf("Contato inserido.\n");
+    printAgenda();
     return &result;
 }
 // FUNCAO PARA ENCONTRAR OS CONTATOS NA AGENDA
@@ -54,57 +66,87 @@ contato *busca_contato(char *nome){
             if(strcmp(nome, atual->nome) == 0){
                 return atual;
             }
+            atual = atual->next;
         }
     }
     printf("Contato não encontrado\n");
+    if(atual == NULL)
+        printf("nulo\n");
     return atual;
 }
 
 contato *consulta_1_svc(char **nome, struct svc_req *rqstp){
     contato *result;
-    printf("%s\n", *nome);
+    static contato c;
     result = busca_contato(*nome);
     if(result == NULL){
-        contato c;
-        c.erro = 1;
+        c.erro = 1; // indica que não foi encontrado o contato
+        c.nome = NULL;
+        c.endereco = NULL;
+        c.telefone = 0;
+        c.next = NULL;
+        printAgenda();
+        printf("aki\n");
         return &c;
+    }else{
+        result->erro = 0;
     }
+    printAgenda();
     return result;
 }
 // FUNCAO QUE DADO UM CONTATO ENVIADO PELO CLIENTE, A QUAL ESTE CONTATO 
 // DEVE TER O NOME DO CONTATO, ELE ALTERA AS INFORMACOES
 int *altera_1_svc(contato *c, struct svc_req *rqstp){
     static int result = 0;
-    char *nome = NULL, *endereco = NULL;
+    char *endereco = NULL;
 
     contato *c_achado = busca_contato(c->nome);
     if(c_achado != NULL){
         printf("Contato encontrado\n");
-        endereco = (char*)malloc(sizeof(char)*(strlen(c->endereco)+1));
         if(c_achado->endereco != NULL)
             free(c_achado->endereco);
-        c_achado->nome = nome;
+        c_achado->endereco = (char*)malloc(sizeof(char)*(strlen(c->endereco)+1));
+        strcpy(c_achado->endereco, c->endereco);
         c_achado->telefone = c->telefone;
         printf("Contato alterado.\n");
     }else{
         result = 0; // contato não encontrado
+        printAgenda();
         return &result;
     }
 
     result = 1;
+    printAgenda();
     return &result;
 }
 
 int *remover_1_svc(char **nome, struct svc_req *rqstp){
     static int result = 0;
-    contato *c = busca_contato(*nome);
-    if(c != NULL){
-        if(c->nome !=NULL)
-            free(c->nome);
-        if(c->endereco != NULL)
-            free(c->endereco);
-        free(c);
-        result++;
+    int is_find = 0;
+    contato *atual = NULL, *anterior = NULL;
+    atual = (contato*)list->first;
+    while (atual != NULL){
+        if(strcmp(*nome, atual->nome) == 0){
+            if(atual->next == NULL){
+                anterior->next = NULL;
+                list->last = anterior;
+            }else if(anterior == NULL){
+                list->first = atual->next;
+            } else {
+                anterior->next = atual->next;
+            }
+            if(atual->nome !=NULL)
+                free(atual->nome);
+            if(atual->endereco != NULL)
+                free(atual->endereco);
+            free(atual);
+            result++;
+            printf("Contato excluído\n");
+            break;
+        }
+        anterior = atual;
+        atual = atual->next;
     }
+    printAgenda();
     return &result;
 }

@@ -5,8 +5,8 @@
 
 struct contato
 {
-    char *nome;
-    char *endereco;
+    string nome<>;
+    string endereco<>;
     int telefone;
     int erro;
     contato *next;

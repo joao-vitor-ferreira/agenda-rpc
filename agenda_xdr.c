@@ -10,9 +10,9 @@ xdr_contato (XDR *xdrs, contato *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_pointer (xdrs, (char **)&objp->nome, sizeof (char), (xdrproc_t) xdr_char))
+	 if (!xdr_string (xdrs, &objp->nome, ~0))
 		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->endereco, sizeof (char), (xdrproc_t) xdr_char))
+	 if (!xdr_string (xdrs, &objp->endereco, ~0))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->telefone))
 		 return FALSE;

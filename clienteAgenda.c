@@ -1,17 +1,28 @@
 /* Cliente RPC simples */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "agenda.h"
 
 int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
     contato c;
     int *result;
-    c.nome = nome;
-    c.endereco = endereco;
+    c.nome = (char*)malloc(sizeof(char)*(strlen(nome)+1));
+    strcpy(c.nome, nome);
+    c.endereco = (char*)malloc(sizeof(char)*(strlen(endereco)+1));
+    strcpy(c.endereco, endereco);
     c.telefone = telefone;
+    c.next = NULL;
+    c.erro = 0;
 
     result = insere_1(&c, clnt);
-    printf("aki\n");
+
+    if(c.nome != NULL)
+        free(c.nome);
+    if(c.endereco != NULL)
+        free(c.endereco);
+
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
@@ -21,18 +32,20 @@ int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
 
 contato consulta(CLIENT *clnt, char *nome){
     contato *result;
+    
     result = consulta_1(&nome, clnt);
+
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
-    } else if(result->erro == 1) {
-        printf("Contato nao encontrado\n");
     }
     return *result;
 }
 
 int altera(CLIENT *clnt, contato c){
     int *result;
+    c.erro = 0;
+    c.next = NULL;
     result = altera_1(&c, clnt);
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
@@ -53,36 +66,36 @@ int remover(CLIENT *clnt, char *nome){
 
 int main( int argc, char *argv[])
 {
-   CLIENT *clnt;
-   int opcao, telefone;
-   char nome[20], endereco[30];
-   int retorno;
-   contato *c;
+    CLIENT *clnt;
+    int opcao, telefone;
+    char nome[20], endereco[30];
+    int retorno;
+    contato c;
 
 
-   /* verifica se o cliente foi chamado corretamente */
-   if (argc!=2)
-   {
-      fprintf (stderr,"Usage: %s hostname num1 num2\n",argv[0]);
-      exit (1);
-   }
+    /* verifica se o cliente foi chamado corretamente */
+    if (argc!=2)
+    {
+        fprintf (stderr,"Usage: %s hostname num1 num2\n",argv[0]);
+        exit (1);
+    }
 
-   /* cria uma struct CLIENT que referencia uma interface RPC */
-   printf("%s\n", argv[1]);
-   clnt = clnt_create (argv[1], AGENDA_PROG, AGENDA_VERSION, "udp");
+    /* cria uma struct CLIENT que referencia uma interface RPC */
+    //    printf("%s\n", argv[1]);
+    clnt = clnt_create (argv[1], AGENDA_PROG, AGENDA_VERSION, "udp");
 
-   /* verifica se a refer�ncia foi criada */
-   if (clnt == (CLIENT *) NULL)
-   {
-      clnt_pcreateerror (argv[1]);
-      exit(1);
-   }
+    /* verifica se a refer�ncia foi criada */
+    if (clnt == (CLIENT *) NULL)
+    {
+        clnt_pcreateerror (argv[1]);
+        exit(1);
+    }
+    retorno = insere(clnt, "joao", "endereço 1", 9999999);
+    retorno = insere(clnt, "maria", "endereço 1", 8888888);
+    retorno = insere(clnt, "jose", "endereço 1", 7777777);
+    retorno = insere(clnt, "nome", "endereço 1", 6666666);
 
-//    retorno = insere(clnt, "nome", "endereco", 9999999);
-   *c = consulta(clnt, "nome");
-   printf("@@%d\n", retorno);
-
-    while (0){
+    while (1){
         printf("##################### AGENDA ####################\n");
         printf("INSERIR CONTATO:   1\n");
         printf("CONSULTAR CONTATO: 2\n");
@@ -112,14 +125,14 @@ int main( int argc, char *argv[])
             case 2:
                 printf("Digite o nome do seu contato: ");
                 scanf(" %[^\n]", nome);
-                *c = consulta(clnt, nome);
-                if(c == NULL){
+                c = consulta(clnt, nome);
+                if(c.erro == 1){
                     printf("Contato não encontrado\n");
                 }else{
                     printf("########## CONTATO ###########\n");
-                    printf("Nome: %s\n", c->nome);
-                    printf("Endereço: %s\n", c->endereco);
-                    printf("Telefone: %d\n", c->telefone);
+                    printf("Nome: %s\n", c.nome);
+                    printf("Endereço: %s\n", c.endereco);
+                    printf("Telefone: %d\n", c.telefone);
                 }
 
                 break;
@@ -133,8 +146,10 @@ int main( int argc, char *argv[])
                 scanf(" %d", &telefone);
 
                 contato ctt;
-                ctt.nome = nome;
-                ctt.endereco = endereco;
+                ctt.nome = malloc(sizeof(char)*(strlen(nome)+1));
+                strcpy(ctt.nome, nome);
+                ctt.endereco = malloc(sizeof(char)*(strlen(endereco)+1));
+                strcpy(ctt.endereco, endereco);
                 ctt.telefone = telefone;
 
                 retorno = altera(clnt, ctt);
@@ -144,6 +159,11 @@ int main( int argc, char *argv[])
                 else
                     printf("Erro ao alterar contato\n");
                     
+                if(ctt.nome != NULL)
+                    free(ctt.nome);
+                if(ctt.endereco != NULL)
+                    free(ctt.endereco);
+
                 break;
 
             case 4:
@@ -153,13 +173,14 @@ int main( int argc, char *argv[])
                 if(retorno)
                     printf("Contato removido\n");
                 else
-                    printf("Erro ao remover contato\n");
+                    printf("Contato não encontrado\n");
 
                 break;
             default:
                 return 0;
                 break;
             }
+            printf("\n");
         }
     }
     

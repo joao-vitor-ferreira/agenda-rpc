@@ -24,7 +24,7 @@ $(CLIENTE) : $(OBJECTS_CLNT)
 	gcc $(TARGETS_CLNT.c) -o $(CLIENTE)
 
 clean : 
-	$(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENTE) $(SERVER) 
+	$(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENTE) $(SERVER)
 
 
 

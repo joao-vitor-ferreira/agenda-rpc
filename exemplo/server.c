@@ -26,7 +26,7 @@ aa * soma_1_svc (operands *ops, struct svc_req *rqstp)
    static aa o;
    o.sub = ops->x - ops->y;
    o.soma = ops->y + ops->x;
-   o.error = 1;
+   o.error = 0;
    printf ("Recebi chamado: sub %d %d\n", ops->x, ops->y);
    return (&o);
 } 
