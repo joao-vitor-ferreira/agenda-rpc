@@ -1,0 +1,7 @@
+*.o
+agenda_clnt.c
+agenda_svc.c
+agenda_xdr.c
+server
+cliente
+exemplo/*
