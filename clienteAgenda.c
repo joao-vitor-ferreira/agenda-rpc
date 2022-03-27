@@ -3,11 +3,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <pthread.h>
 #include "agenda.h"
+
+static int respondeu = 0;
+
+void *timeout(void *vargp) {
+   int i = 0;
+   for (i = 0; i < 6; i++) {
+      usleep(500000);
+      if(respondeu == 1) {
+         return NULL;
+      }
+   }
+   printf("O servidor demorou muito para responder.\n");
+   exit(0);
+}
 
 int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
     contato c;
     int *result;
+    pthread_t thread_id;
+
     c.nome = (char*)malloc(sizeof(char)*(strlen(nome)+1));
     strcpy(c.nome, nome);
     c.endereco = (char*)malloc(sizeof(char)*(strlen(endereco)+1));
@@ -16,6 +34,7 @@ int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
     c.next = NULL;
     c.erro = 0;
 
+    pthread_create(&thread_id, NULL, timeout, NULL);
     result = insere_1(&c, clnt);
 
     if(c.nome != NULL)
@@ -27,40 +46,70 @@ int insere(CLIENT *clnt, char *nome, char *endereco, int telefone){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
     }
+
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
     return *result;
 }
 
 contato consulta(CLIENT *clnt, char *nome){
     contato *result;
+    pthread_t thread_id;
     
+    pthread_create(&thread_id, NULL, timeout, NULL);
     result = consulta_1(&nome, clnt);
 
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
     }
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
     return *result;
 }
 
 int altera(CLIENT *clnt, contato c){
     int *result;
+    pthread_t thread_id;
+
     c.erro = 0;
     c.next = NULL;
+
+    pthread_create(&thread_id, NULL, timeout, NULL);
     result = altera_1(&c, clnt);
+
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
     }
+
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
     return *result;
 }
 
 int remover(CLIENT *clnt, char *nome){
     int *result;
+    pthread_t thread_id;
+
+    pthread_create(&thread_id, NULL, timeout, NULL);
     result = remover_1(&nome, clnt);
+
     if(result == NULL){
         printf("Erro ao chamar funcao remota\n");
         exit(1);
     }
+
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
     return *result;
 }
 
@@ -71,6 +120,7 @@ int main( int argc, char *argv[])
     char nome[20], endereco[30];
     int retorno;
     contato c;
+    pthread_t thread_id;
 
 
     /* verifica se o cliente foi chamado corretamente */
@@ -82,6 +132,7 @@ int main( int argc, char *argv[])
 
     /* cria uma struct CLIENT que referencia uma interface RPC */
     //    printf("%s\n", argv[1]);
+    pthread_create(&thread_id, NULL, timeout, NULL);
     clnt = clnt_create (argv[1], AGENDA_PROG, AGENDA_VERSION, "udp");
 
     /* verifica se a refer�ncia foi criada */
@@ -90,6 +141,11 @@ int main( int argc, char *argv[])
         clnt_pcreateerror (argv[1]);
         exit(1);
     }
+    
+    respondeu = 1;
+    pthread_join(thread_id, NULL);
+    respondeu = 0;
+
     retorno = insere(clnt, "joao", "endereço 1", 9999999);
     retorno = insere(clnt, "maria", "endereço 1", 8888888);
     retorno = insere(clnt, "jose", "endereço 1", 7777777);
